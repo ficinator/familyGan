@@ -1,4 +1,5 @@
 import os
+import pickle
 import random
 import string
 from os.path import join
@@ -6,18 +7,17 @@ from typing import Optional, List, Tuple
 
 import numpy as np
 from PIL import Image
-import pickle
 
+import config
+import stylegan_encoder.config as stylgan_config
+import stylegan_encoder.dnnlib as dnnlib
 from config import URL_VGG_16
-from familyGan import config
-import familyGan.stylegan_encoder.config as stylgan_config
-import familyGan.stylegan_encoder.dnnlib as dnnlib
-from familyGan.models.simple_avarage import SimpleAverageModel
-from familyGan.multiproc_util import parmap
-from familyGan.stylegan_encoder.encoder.generator_model import Generator
-from familyGan.stylegan_encoder.encoder.perceptual_model import PerceptualModel, PerceptualModelOld
-from familyGan.stylegan_encoder.ffhq_dataset.face_alignment import image_align_from_image
+from models.simple_avarage import SimpleAverageModel
+from multiproc_util import parmap
 from stylegan_encoder.encode_images import split_to_batches
+from stylegan_encoder.encoder.generator_model import Generator
+from stylegan_encoder.encoder.perceptual_model import PerceptualModel, PerceptualModelOld
+from stylegan_encoder.ffhq_dataset.face_alignment import image_align_from_image
 
 os.environ['TF_ENABLE_AUTO_MIXED_PRECISION'] = '1'
 from auto_tqdm import tqdm
@@ -76,7 +76,7 @@ def image_list2latent_old(img_list, iterations=750, learning_rate=1.
 
 
 def image2latent(img_list, iterations=750, init_dlatents: Optional[np.ndarray] = None, args=None
-                 , return_image: bool = False, is_aligned:bool=False) \
+                 , return_image: bool = False, is_aligned: bool = False) \
         -> Tuple[List[Optional[np.ndarray]], List[np.ndarray]]:
     """
     :return: sizes of (batch_size, img_height, img_width, 3), (batch_size, 18, 512)
