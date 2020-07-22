@@ -10,6 +10,7 @@ from PIL import Image
 
 import familyGan.stylegan_encoder.config as stylgan_config
 import familyGan.stylegan_encoder.dnnlib as dnnlib
+from familyGan import config
 from familyGan.config import URL_VGG_16
 from familyGan.models.simple_avarage import SimpleAverageModel
 from familyGan.multiproc_util import parmap

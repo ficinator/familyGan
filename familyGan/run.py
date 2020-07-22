@@ -39,13 +39,13 @@ PERC_PARAM = PerceptParam(lr=0.06  # 0.02
 # endregion
 
 # region Run Paths
-DATA_PATH = "../data"
-RESULTS_PATH = "../results"
+DATA_PATH = "data"
+RESULTS_PATH = "results"
 IM1_PATH = pjoin(DATA_PATH, "toy_face.jpg")
 IM2_PATH = pjoin(DATA_PATH, "toy_face2.jpg")
 DLATENTS_CACHE = pjoin(RESULTS_PATH, "cache/dlatents")
 VGG_EMBED_CACHE = pjoin(RESULTS_PATH, "cache/vgg_embeddings")
-MODEL_CACHE = "../familyGan/cache"
+MODEL_CACHE = "familyGan/cache"
 EXPERIMENT_NAME = "loss_decision_iter_{iter}_lr_{lr}"
 
 
