@@ -6,12 +6,12 @@ from collections import namedtuple
 import numpy as np
 from keras.utils import get_file
 
-import stylegan_encoder.dnnlib.tflib as tflib
-from stylegan_encoder import config
-from stylegan_encoder import dnnlib
-from stylegan_encoder.align_images import unpack_bz2, LANDMARKS_MODEL_URL
-from stylegan_encoder.encoder.generator_model import Generator
-from stylegan_encoder.ffhq_dataset.landmarks_detector import LandmarksDetector
+import familyGan.stylegan_encoder.dnnlib.tflib as tflib
+from familyGan.stylegan_encoder import config
+from familyGan.stylegan_encoder import dnnlib
+from familyGan.stylegan_encoder.align_images import unpack_bz2, LANDMARKS_MODEL_URL
+from familyGan.stylegan_encoder.encoder.generator_model import Generator
+from familyGan.stylegan_encoder.ffhq_dataset.landmarks_detector import LandmarksDetector
 
 sys.modules['dnnlib'] = dnnlib
 sys.modules['tflib'] = tflib

@@ -8,16 +8,15 @@ from typing import Optional, List, Tuple
 import numpy as np
 from PIL import Image
 
-import config
-import stylegan_encoder.config as stylgan_config
-import stylegan_encoder.dnnlib as dnnlib
-from config import URL_VGG_16
-from models.simple_avarage import SimpleAverageModel
-from multiproc_util import parmap
-from stylegan_encoder.encode_images import split_to_batches
-from stylegan_encoder.encoder.generator_model import Generator
-from stylegan_encoder.encoder.perceptual_model import PerceptualModel, PerceptualModelOld
-from stylegan_encoder.ffhq_dataset.face_alignment import image_align_from_image
+import familyGan.stylegan_encoder.config as stylgan_config
+import familyGan.stylegan_encoder.dnnlib as dnnlib
+from familyGan.config import URL_VGG_16
+from familyGan.models.simple_avarage import SimpleAverageModel
+from familyGan.multiproc_util import parmap
+from familyGan.stylegan_encoder.encode_images import split_to_batches
+from familyGan.stylegan_encoder.encoder.generator_model import Generator
+from familyGan.stylegan_encoder.encoder.perceptual_model import PerceptualModel, PerceptualModelOld
+from familyGan.stylegan_encoder.ffhq_dataset.face_alignment import image_align_from_image
 
 os.environ['TF_ENABLE_AUTO_MIXED_PRECISION'] = '1'
 from auto_tqdm import tqdm
