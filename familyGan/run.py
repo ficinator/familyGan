@@ -7,10 +7,10 @@ from PIL import Image
 from keras.applications.resnet50 import preprocess_input
 from keras.models import load_model
 
-from familyGan.config import URL_PRETRAINED_RESNET, PerceptParam
-from familyGan.pipeline import align_image, image2latent, image_list2latent_old, latent_list2image_list
-from familyGan.stylegan_encoder import dnnlib
-from familyGan.stylegan_encoder.training.misc import load_pkl, save_pkl
+from config import URL_PRETRAINED_RESNET, PerceptParam
+from pipeline import align_image, image2latent, image_list2latent_old, latent_list2image_list
+from stylegan_encoder import dnnlib
+from stylegan_encoder.training.misc import load_pkl, save_pkl
 
 # region Run Param
 ITER = 250
