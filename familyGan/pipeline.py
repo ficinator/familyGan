@@ -75,8 +75,8 @@ def image_list2latent_old(img_list, iterations=750, learning_rate=1.
     return None, generator.get_dlatents()
 
 
-def image2latent(img_list, iterations=750, init_dlatents: Optional[np.ndarray] = None, args=None
-                 , return_image: bool = False, is_aligned: bool = False) \
+def image_list2latent_list(img_list, iterations=750, init_dlatents: Optional[np.ndarray] = None, args=None
+                           , return_image: bool = False, is_aligned: bool = False) \
         -> Tuple[List[Optional[np.ndarray]], List[np.ndarray]]:
     """
     :return: sizes of (batch_size, img_height, img_width, 3), (batch_size, 18, 512)
@@ -126,6 +126,10 @@ def image2latent(img_list, iterations=750, init_dlatents: Optional[np.ndarray] =
     return generated_images_list, generated_dlatents_list
 
 
+def image2latent(image: Image.Image) -> np.ndarray:
+    return image_list2latent_list([image])[1][0]
+
+
 def predict(father_latent, mother_latent):
     model = SimpleAverageModel(coef=coef)
     child_latent = model.predict([father_latent], [mother_latent])
@@ -166,26 +170,26 @@ def full_pipe(father, mother):
         mother_latent = image2latent_cache[mother_hash]
 
     # to latent
-    def parallel_tolatent(tpl):
-        (i, aligned_image) = tpl
-        os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"  # see issue #152
-        os.environ["CUDA_VISIBLE_DEVICES"] = str(i)
-        # config.Gs_network
-        _, aligned_latent = image2latent(aligned_image)
-        return aligned_latent
+
+    # def parallel_tolatent(tpl):
+    #     (i, aligned_image) = tpl
+    #     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"  # see issue #152
+    #     os.environ["CUDA_VISIBLE_DEVICES"] = str(i)
+    #     # config.Gs_network
+    #     _, aligned_latent = image2latent(aligned_image)
+    #     return aligned_latent
 
     print("starting latent extraction")
     if father_latent is None and mother_latent is None:
         father_aligned = align_image(father)
         mother_aligned = align_image(mother)
-        father_latent, mother_latent = list(
-            parmap(parallel_tolatent, list(enumerate([father_aligned, mother_aligned]))))
+        father_latent, mother_latent = image_list2latent_list([father_aligned, mother_aligned])[1]
     elif father_latent is not None and mother_latent is None:
         mother_aligned = align_image(mother)
-        mother_latent = list(parmap(parallel_tolatent, list(enumerate([mother_aligned]))))[0]
+        mother_latent = image2latent(mother_aligned)
     elif father_latent is None and mother_latent is not None:
         father_aligned = align_image(father)
-        father_latent = list(parmap(parallel_tolatent, list(enumerate([father_aligned]))))[0]
+        father_latent = image2latent(father_aligned)
     print("end latent extraction")
     # _, father_latent = image2latent(father_aligned)
     # _, mother_latent = image2latent(mother_aligned)

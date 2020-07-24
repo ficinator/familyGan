@@ -8,7 +8,7 @@ from keras.applications.resnet50 import preprocess_input
 from keras.models import load_model
 
 from familyGan.config import URL_PRETRAINED_RESNET, PerceptParam
-from familyGan.pipeline import align_image, image2latent, image_list2latent_old, latent_list2image_list
+from familyGan.pipeline import align_image, image_list2latent_list, image_list2latent_old, latent_list2image_list
 from familyGan.stylegan_encoder import dnnlib
 from familyGan.stylegan_encoder.training.misc import load_pkl, save_pkl
 
@@ -74,8 +74,8 @@ def run_single_image(perc_param=None):
     start = time.time()
     print(f"started im2lat")
 
-    _, aligned_latent = image2latent(imgs, iterations=ITER, init_dlatents=init_dlatent, args=perc_param,
-                                     is_aligned=True)  # with new perceptual model
+    _, aligned_latent = image_list2latent_list(imgs, iterations=ITER, init_dlatents=init_dlatent, args=perc_param,
+                                               is_aligned=True)  # with new perceptual model
     aligned_latent = aligned_latent[0]
 
     # _, aligned_latent = image_list2latent_old(imgs, learning_rate=LR, iterations=ITER, init_dlatents = init_dlatent)
