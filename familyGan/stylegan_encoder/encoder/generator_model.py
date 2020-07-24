@@ -54,9 +54,10 @@ class Generator:
         self.sess = tf.get_default_session()
         self.graph = tf.get_default_graph()
 
-        print([n.name for n in self.graph.as_graph_def().node])
+        for n in self.graph.as_graph_def().node]:
+            print(n.name)
 
-        self.dlatent_variable = next(v for v in tf.global_variables() if 'learnable_dlatents' in v.name)
+                   self.dlatent_variable = next(v for v in tf.global_variables() if 'learnable_dlatents' in v.name)
         self.set_dlatents(self.initial_dlatents)
 
         try:
