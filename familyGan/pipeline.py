@@ -75,9 +75,9 @@ def image_list2latent_old(img_list, iterations=750, learning_rate=1.
     return None, generator.get_dlatents()
 
 
-def image_list2latent_list(img_list, iterations=750, init_dlatents: Optional[np.ndarray] = None, args=None
-                           , return_image: bool = False, is_aligned: bool = False) \
-        -> Tuple[List[Optional[np.ndarray]], List[np.ndarray]]:
+def image_list2latent(img_list, iterations=750, init_dlatents: Optional[np.ndarray] = None, args=None
+                      , return_image: bool = False, is_aligned: bool = False) \
+        -> Tuple[Optional[np.ndarray], np.ndarray]:
     """
     :return: sizes of (batch_size, img_height, img_width, 3), (batch_size, 18, 512)
     """
@@ -94,40 +94,39 @@ def image_list2latent_list(img_list, iterations=750, init_dlatents: Optional[np.
             perc_model = pickle.load(f)
     perceptual_model = PerceptualModel(args, perc_model=perc_model, batch_size=batch_size)
     perceptual_model.build_perceptual_model(generator)
-    generated_images_list, generated_dlatents_list = [], []
 
-    for images_batch in tqdm(split_to_batches(img_list, batch_size), total=len(img_list) // batch_size):
-        names = [f"image_{n}" for n in range(len(images_batch))]
-        # names = [os.path.splitext(os.path.basename(x))[0] for x in images_batch]
-        perceptual_model.set_reference_images(images_batch, is_aligned=is_aligned)
+    # names = [f"image_{n}" for n in range(len(images_batch))]
+    names = [os.path.splitext(os.path.basename(x))[0] for x in img_list]
+    perceptual_model.set_reference_images(img_list, is_aligned=is_aligned)
 
-        # FIXME: split also init_dlatents to batches
-        if init_dlatents is not None:
-            generator.set_dlatents(init_dlatents)
+    # FIXME: split also init_dlatents to batches
+    if init_dlatents is not None:
+        generator.set_dlatents(init_dlatents)
 
-        op = perceptual_model.optimize(generator.dlatent_variable, iterations=iterations)
-        pbar = tqdm(op, position=0, leave=True, total=iterations)
-        best_loss = None
-        best_dlatent = None
-        for loss_dict in pbar:
-            pbar.set_description(" ".join(names) + ": " + "; ".join(["{} {:.4f}".format(k, v)
-                                                                     for k, v in loss_dict.items()]))
-            if best_loss is None or loss_dict["loss"] < best_loss:
-                best_loss = loss_dict["loss"]
-                best_dlatent = generator.get_dlatents()
-            generator.stochastic_clip_dlatents()
+    op = perceptual_model.optimize(generator.dlatent_variable, iterations=iterations)
+    pbar = tqdm(op, position=0, leave=True, total=iterations)
+    best_loss = None
+    best_dlatent = None
+    for loss_dict in pbar:
+        pbar.set_description(" ".join(names) + ": " + "; ".join(["{} {:.4f}".format(k, v)
+                                                                 for k, v in loss_dict.items()]))
+        if best_loss is None or loss_dict["loss"] < best_loss:
+            best_loss = loss_dict["loss"]
+            best_dlatent = generator.get_dlatents()
+        generator.stochastic_clip_dlatents()
 
-        print(" ".join(names), " Loss {:.4f}".format(best_loss))
-        generator.set_dlatents(best_dlatent)
+    print(" ".join(names), " Loss {:.4f}".format(best_loss))
+    generator.set_dlatents(best_dlatent)
 
-        generated_images_list = [generator.generate_images() if return_image else None]
-        generated_dlatents_list += [generator.get_dlatents()]
+    generated_images = generator.generate_images() if return_image else None
 
-    return generated_images_list, generated_dlatents_list
+    return generated_images, generator.get_dlatents()
 
 
-def image2latent(image: Image.Image) -> np.ndarray:
-    return image_list2latent_list([image])[1][0]
+def image2latent(image: Image.Image, return_image: bool = False) -> Tuple[Optional[np.ndarray], np.ndarray]:
+    images, latents = image_list2latent([image], return_image=return_image)
+    image: Optional[np.ndarray] = images[0] if images is not None else None
+    return image, latents[0]
 
 
 def predict(father_latent, mother_latent):
@@ -183,7 +182,7 @@ def full_pipe(father, mother):
     if father_latent is None and mother_latent is None:
         father_aligned = align_image(father)
         mother_aligned = align_image(mother)
-        latents = image_list2latent_list([father_aligned, mother_aligned])[1][0]
+        latents = image_list2latent([father_aligned, mother_aligned])[1]
         father_latent = latents[0]
         mother_latent = latents[1]
     elif father_latent is not None and mother_latent is None:
