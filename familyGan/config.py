@@ -34,8 +34,7 @@ PerceptParam = namedtuple('PerceptParam', ['image_size', 'decay_rate', 'decay_st
     , 'use_mssim_loss', 'use_lpips_loss', 'use_l1_penalty', 'use_vgg_layer', 'use_vgg_loss', 'lr'])
 
 DEFAULT_PERC_PARAM = PerceptParam(
-    # lr=0.02,
-    lr=0.2,
+    lr=0.02,
     decay_rate=0.9,
     decay_steps=10,  # precent from total iter
     image_size=256,
