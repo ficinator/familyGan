@@ -11,7 +11,7 @@ import keras.backend as K
 
 import traceback
 from familyGan.stylegan_encoder.encoder.AdaBound import AdaBoundOptimizer
-from stylegan_encoder.ffhq_dataset.face_alignment import image_align_from_image
+from familyGan.stylegan_encoder.ffhq_dataset.face_alignment import image_align_from_image
 import familyGan.config as confing
 
 def load_images(images_list, image_size:int=256, align:bool=True):
