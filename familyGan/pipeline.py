@@ -95,8 +95,8 @@ def image_list2latent(img_list, iterations=750, init_dlatents: Optional[np.ndarr
     perceptual_model = PerceptualModel(args, perc_model=perc_model, batch_size=batch_size)
     perceptual_model.build_perceptual_model(generator)
 
-    # names = [f"image_{n}" for n in range(len(images_batch))]
-    names = [os.path.splitext(os.path.basename(x))[0] for x in img_list]
+    names = [f"image_{n}" for n in range(batch_size)]
+    # names = [os.path.splitext(os.path.basename(x))[0] for x in img_list]
     perceptual_model.set_reference_images(img_list, is_aligned=is_aligned)
 
     # FIXME: split also init_dlatents to batches
