@@ -183,7 +183,9 @@ def full_pipe(father, mother):
     if father_latent is None and mother_latent is None:
         father_aligned = align_image(father)
         mother_aligned = align_image(mother)
-        father_latent, mother_latent = image_list2latent_list([father_aligned, mother_aligned])[1]
+        latents = image_list2latent_list([father_aligned, mother_aligned])[1]
+        father_latent = latents[0]
+        mother_latent = latents[1]
     elif father_latent is not None and mother_latent is None:
         mother_aligned = align_image(mother)
         mother_latent = image2latent(mother_aligned)
@@ -193,6 +195,8 @@ def full_pipe(father, mother):
     print("end latent extraction")
     # _, father_latent = image2latent(father_aligned)
     # _, mother_latent = image2latent(mother_aligned)
+
+    print(father_latent.shape, mother_latent.shape)
 
     # cache
     image2latent_cache[father_hash] = father_latent
